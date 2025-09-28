@@ -9,12 +9,6 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['@prisma/client'],
   },
-  api: {
-    bodyParser: {
-      sizeLimit: '25mb',
-    },
-    responseLimit: false,
-  },
 }
 
 module.exports = nextConfig
