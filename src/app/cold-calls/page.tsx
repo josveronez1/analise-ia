@@ -37,6 +37,7 @@ export default function ColdCallsPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isLoadingBdrs, setIsLoadingBdrs] = useState(true);
+  const [uploadProgress, setUploadProgress] = useState<string>('');
 
   // Carregar BDRs
   useEffect(() => {
@@ -69,10 +70,10 @@ export default function ColdCallsPage() {
         return;
       }
       
-      // Validar tamanho (máximo 25MB)
-      const maxSize = 25 * 1024 * 1024; // 25MB
+      // Validar tamanho (máximo 50MB com Blob Storage)
+      const maxSize = 50 * 1024 * 1024; // 50MB
       if (file.size > maxSize) {
-        setError('Arquivo muito grande. Máximo permitido: 25MB');
+        setError('Arquivo muito grande. Máximo permitido: 50MB');
         return;
       }
       
@@ -121,20 +122,42 @@ export default function ColdCallsPage() {
     setAnalysisResult(null);
 
     try {
-      const formData = new FormData();
-      formData.append('bdrId', selectedBdr!.toString());
-      formData.append('prospectNome', prospectNome.trim());
-      formData.append('prospectEmpresa', prospectEmpresa.trim());
-      formData.append('insightComercial', insightComercial.trim());
-      formData.append('audioFile', audioFile!);
+      // Passo 1: Upload do arquivo para Blob Storage
+      setUploadProgress('Fazendo upload do arquivo...');
+      const uploadFormData = new FormData();
+      uploadFormData.append('file', audioFile!);
 
-      const response = await fetch('/api/cold-calls', {
+      const uploadResponse = await fetch('/api/upload', {
         method: 'POST',
-        body: formData,
+        body: uploadFormData,
       });
 
-      if (response.ok) {
-        const result = await response.json();
+      if (!uploadResponse.ok) {
+        const uploadError = await uploadResponse.json();
+        throw new Error(uploadError.error || 'Erro no upload do arquivo');
+      }
+
+      const uploadResult = await uploadResponse.json();
+      const audioUrl = uploadResult.url;
+
+      // Passo 2: Analisar cold call usando a URL do Blob Storage
+      setUploadProgress('Analisando cold call com IA...');
+      const analysisResponse = await fetch('/api/cold-calls', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          bdrId: selectedBdr,
+          prospectNome: prospectNome.trim(),
+          prospectEmpresa: prospectEmpresa.trim(),
+          insightComercial: insightComercial.trim(),
+          audioUrl: audioUrl,
+        }),
+      });
+
+      if (analysisResponse.ok) {
+        const result = await analysisResponse.json();
         setAnalysisResult(result);
         setSuccess('Análise concluída com sucesso!');
         
@@ -148,14 +171,15 @@ export default function ColdCallsPage() {
         // Limpar mensagem de sucesso após 5 segundos
         setTimeout(() => setSuccess(null), 5000);
       } else {
-        const errorData = await response.json();
+        const errorData = await analysisResponse.json();
         setError(errorData.error || 'Erro ao analisar cold call');
       }
     } catch (error) {
       console.error('Erro ao analisar:', error);
-      setError('Erro de conexão. Tente novamente.');
+      setError(error instanceof Error ? error.message : 'Erro de conexão. Tente novamente.');
     } finally {
       setIsAnalyzing(false);
+      setUploadProgress('');
     }
   };
 
@@ -293,7 +317,7 @@ export default function ColdCallsPage() {
               </div>
             )}
             <p className="text-xs text-gray-700 mt-1">
-              Formatos aceitos: MP3, WAV, M4A, etc. Máximo: 25MB
+              Formatos aceitos: MP3, WAV, M4A, etc. Máximo: 50MB
             </p>
           </div>
 
@@ -308,7 +332,7 @@ export default function ColdCallsPage() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Analisando...
+                {uploadProgress || 'Processando...'}
               </>
             ) : (
               'Analisar Cold Call'

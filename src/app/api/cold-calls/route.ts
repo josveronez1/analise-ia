@@ -6,52 +6,41 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// POST - Analisar Cold Call
+// POST - Analisar Cold Call via Blob Storage
 export async function POST(request: NextRequest) {
   try {
-    // Usar streaming para contornar limitações do Vercel
-    const contentType = request.headers.get('content-type') || '';
-    
-    if (!contentType.includes('multipart/form-data')) {
-      return NextResponse.json(
-        { error: 'Content-Type deve ser multipart/form-data' },
-        { status: 400 }
-      );
-    }
-
-    // Ler o body como stream
-    const formData = await request.formData();
-    const bdrId = parseInt(formData.get('bdrId') as string);
-    const prospectNome = formData.get('prospectNome') as string;
-    const prospectEmpresa = formData.get('prospectEmpresa') as string;
-    const insightComercial = formData.get('insightComercial') as string;
-    const audioFile = formData.get('audioFile') as File;
+    const body = await request.json();
+    const { bdrId, prospectNome, prospectEmpresa, insightComercial, audioUrl } = body;
 
     // Validar dados
-    if (!bdrId || !prospectNome || !prospectEmpresa || !audioFile) {
+    if (!bdrId || !prospectNome || !prospectEmpresa || !audioUrl) {
       return NextResponse.json(
         { error: 'Dados obrigatórios não fornecidos' },
         { status: 400 }
       );
     }
 
-    // Validar tamanho do arquivo (máximo 10MB para Vercel)
-    const maxSize = 10 * 1024 * 1024; // 10MB (limite do Vercel)
-    if (audioFile.size > maxSize) {
+    // Validar URL
+    try {
+      new URL(audioUrl);
+    } catch {
       return NextResponse.json(
-        { error: 'Arquivo muito grande. Tamanho máximo: 10MB (limite do Vercel)' },
-        { status: 413 }
-      );
-    }
-
-    // Validar tipo de arquivo
-    const allowedTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/m4a', 'audio/ogg'];
-    if (!allowedTypes.includes(audioFile.type)) {
-      return NextResponse.json(
-        { error: 'Tipo de arquivo não suportado. Use MP3, WAV, M4A ou OGG' },
+        { error: 'URL inválida' },
         { status: 400 }
       );
     }
+
+    // Baixar arquivo do Blob Storage
+    const response = await fetch(audioUrl);
+    if (!response.ok) {
+      return NextResponse.json(
+        { error: 'Erro ao baixar arquivo de áudio' },
+        { status: 400 }
+      );
+    }
+
+    const audioBuffer = await response.arrayBuffer();
+    const audioFile = new File([audioBuffer], 'audio.mp3', { type: 'audio/mpeg' });
 
     // Transcrever áudio com Whisper
     const transcription = await openai.audio.transcriptions.create({
