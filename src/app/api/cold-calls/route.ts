@@ -24,11 +24,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validar tamanho do arquivo (máximo 10MB)
-    const maxSize = 10 * 1024 * 1024; // 10MB
+    // Validar tamanho do arquivo (máximo 25MB)
+    const maxSize = 25 * 1024 * 1024; // 25MB
     if (audioFile.size > maxSize) {
       return NextResponse.json(
-        { error: 'Arquivo muito grande. Tamanho máximo: 10MB' },
+        { error: 'Arquivo muito grande. Tamanho máximo: 25MB' },
         { status: 413 }
       );
     }
