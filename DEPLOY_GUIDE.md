@@ -9,49 +9,42 @@ Este guia te ajudará a fazer o deploy da aplicação **Análise BDRs** no Verce
 - ✅ Banco de dados PostgreSQL (ex: Neon, Supabase, Railway, etc.)
 - ✅ Chave da API OpenAI
 
-## 🗄️ 1. Configurar Banco de Dados PostgreSQL
+## 🗄️ 1. Banco de Dados Neon (✅ CONFIGURADO)
 
-### Opção A: Neon (Recomendado - Gratuito)
-1. Acesse [neon.tech](https://neon.tech)
-2. Crie uma conta e um novo projeto
-3. Copie a connection string (exemplo: `postgresql://user:password@host/dbname`)
+O banco Neon já está configurado e funcionando:
+- **Database**: `neondb` 
+- **Region**: `sa-east-1` (São Paulo)
+- **Status**: ✅ Conectado e migrações executadas
+- **Connection String**: Já configurada no `.env`
 
-### Opção B: Supabase
-1. Acesse [supabase.com](https://supabase.com)
-2. Crie um novo projeto
-3. Vá em Settings > Database
-4. Copie a connection string
+**Dados do banco atual:**
+```
+postgresql://neondb_owner:npg_n4KWUXzRm8wa@ep-flat-river-ac3ewi50-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+```
 
-### Opção C: Railway
-1. Acesse [railway.app](https://railway.app)
-2. Crie um novo projeto PostgreSQL
-3. Copie a connection string
+## 🔑 2. Chave da OpenAI (✅ CONFIGURADA)
 
-## 🔑 2. Obter Chave da OpenAI
+A chave da OpenAI já está configurada no projeto:
+- **Status**: ✅ Configurada no `.env`
+- **Chave**: `sk-proj-***` (configurada no Vercel)
 
-1. Acesse [platform.openai.com](https://platform.openai.com)
-2. Vá em API Keys
-3. Crie uma nova chave
-4. Copie a chave (começa com `sk-proj-`)
+## 📤 3. Push para GitHub (✅ PRONTO)
 
-## 📤 3. Push para GitHub
+O projeto já está inicializado no git e pronto para push:
 
 ```bash
-# 1. Inicializar git (se ainda não foi feito)
-git init
-
-# 2. Adicionar todos os arquivos
-git add .
-
-# 3. Fazer commit inicial
-git commit -m "feat: sistema de análise de BDRs com IA"
-
-# 4. Conectar ao repositório GitHub
+# 1. Conectar ao repositório GitHub (você precisa criar no GitHub)
 git remote add origin https://github.com/SEU_USUARIO/analise-ia.git
 
-# 5. Push para o GitHub
+# 2. Push para o GitHub
 git push -u origin main
 ```
+
+**Status atual:**
+- ✅ Git inicializado
+- ✅ Commit inicial feito
+- ✅ 37 arquivos commitados
+- 🔄 **Próximo passo**: Criar repositório no GitHub e conectar
 
 ## 🌐 4. Deploy no Vercel
 

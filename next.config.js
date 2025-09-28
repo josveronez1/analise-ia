@@ -5,7 +5,16 @@ const nextConfig = {
   },
   typescript: {
     ignoreBuildErrors: true,
-  }
+  },
+  experimental: {
+    serverComponentsExternalPackages: ['@prisma/client'],
+  },
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb',
+    },
+    responseLimit: false,
+  },
 }
 
 module.exports = nextConfig

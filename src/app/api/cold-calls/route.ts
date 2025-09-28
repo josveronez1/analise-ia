@@ -24,6 +24,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validar tamanho do arquivo (máximo 10MB)
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (audioFile.size > maxSize) {
+      return NextResponse.json(
+        { error: 'Arquivo muito grande. Tamanho máximo: 10MB' },
+        { status: 413 }
+      );
+    }
+
+    // Validar tipo de arquivo
+    const allowedTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/m4a', 'audio/ogg'];
+    if (!allowedTypes.includes(audioFile.type)) {
+      return NextResponse.json(
+        { error: 'Tipo de arquivo não suportado. Use MP3, WAV, M4A ou OGG' },
+        { status: 400 }
+      );
+    }
+
     // Transcrever áudio com Whisper
     const transcription = await openai.audio.transcriptions.create({
       file: audioFile,
