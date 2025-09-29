@@ -153,11 +153,11 @@ export default function BDRsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background transition-colors">
       <Navigation />
       
       <div className="max-w-4xl mx-auto p-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
+        <h1 className="text-3xl font-bold text-foreground mb-8">
           Gerenciar BDRs
         </h1>
 
@@ -181,12 +181,12 @@ export default function BDRsPage() {
         )}
 
         {/* Formulário para adicionar BDR */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Adicionar Novo BDR</h2>
+        <div className="bg-card rounded-lg shadow-sm border border-border p-6 mb-6">
+          <h2 className="text-xl font-semibold text-foreground mb-4">Adicionar Novo BDR</h2>
           
           <div className="flex gap-4">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-500 mb-2">
+              <label className="block text-sm font-medium text-muted-foreground mb-2">
                 Nome do BDR
               </label>
               <input
@@ -194,12 +194,12 @@ export default function BDRsPage() {
                 value={newBdrName}
                 onChange={(e) => setNewBdrName(e.target.value)}
                 onKeyPress={handleKeyPress}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-500"
+                className="w-full p-3 border border-input bg-background text-foreground rounded-md focus:ring-2 focus:ring-ring focus:border-transparent placeholder-muted-foreground transition-colors"
                 placeholder="Digite o nome do BDR (mín. 2 caracteres)"
                 maxLength={50}
                 disabled={isAdding}
               />
-              <p className="text-xs text-gray-700 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 {newBdrName.length}/50 caracteres
               </p>
             </div>
@@ -227,15 +227,15 @@ export default function BDRsPage() {
         </div>
 
         {/* Lista de BDRs */}
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">
+        <div className="bg-card rounded-lg shadow-sm border border-border overflow-hidden">
+          <div className="px-6 py-4 border-b border-border">
+            <h2 className="text-lg font-semibold text-foreground">
               BDRs Cadastrados ({bdrs.length})
             </h2>
           </div>
 
           {bdrs.length === 0 ? (
-            <div className="p-8 text-center text-gray-700">
+            <div className="p-8 text-center text-muted-foreground">
               <div className="text-4xl mb-4">��</div>
               <p className="text-lg font-medium mb-2">Nenhum BDR cadastrado</p>
               <p className="text-sm">Adicione seu primeiro BDR usando o formulário acima.</p>
@@ -252,10 +252,10 @@ export default function BDRsPage() {
                         </span>
                       </div>
                       <div>
-                        <h3 className="text-lg font-medium text-gray-900">
+                        <h3 className="text-lg font-medium text-foreground">
                           {bdr.nome}
                         </h3>
-                        <p className="text-sm text-gray-700">
+                        <p className="text-sm text-muted-foreground">
                           Cadastrado em {new Date(bdr.createdAt).toLocaleDateString('pt-BR')}
                         </p>
                       </div>
@@ -287,10 +287,10 @@ export default function BDRsPage() {
 
         {/* Estatísticas */}
         {bdrs.length > 0 && (
-          <div className="mt-6 bg-blue-50 rounded-lg p-4">
+          <div className="mt-6 bg-muted rounded-lg p-4">
             <div className="flex items-center space-x-2">
-              <span className="text-blue-600">📊</span>
-              <span className="text-blue-800 font-medium">
+              <span className="text-primary">📊</span>
+              <span className="text-foreground font-medium">
                 Total de BDRs: {bdrs.length}
               </span>
             </div>

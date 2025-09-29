@@ -136,7 +136,7 @@ export default function ManageColdCallsPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background transition-colors">
         <Navigation />
         <div className="max-w-7xl mx-auto p-6">
           <div className="flex items-center justify-center h-64">
@@ -148,12 +148,12 @@ export default function ManageColdCallsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background transition-colors">
       <Navigation />
       
       <div className="max-w-7xl mx-auto p-6">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-foreground">
             Gerenciar Cold Calls
           </h1>
           <Link
@@ -184,18 +184,18 @@ export default function ManageColdCallsPage() {
         )}
 
         {/* Filtros */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Filtros</h2>
+        <div className="bg-card rounded-lg shadow-sm border border-border p-6 mb-6">
+          <h2 className="text-lg font-semibold text-foreground mb-4">Filtros</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-500 mb-2">
+              <label className="block text-sm font-medium text-muted-foreground mb-2">
                 BDR
               </label>
               <select
                 value={selectedBdr || ''}
                 onChange={(e) => setSelectedBdr(e.target.value ? parseInt(e.target.value) : null)}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 placeholder-gray-500"
+                className="w-full p-2 border border-input bg-background text-foreground rounded-md focus:ring-2 focus:ring-ring placeholder-muted-foreground transition-colors"
               >
                 <option value="">Todos os BDRs</option>
                 {bdrs.map((bdr) => (
@@ -207,7 +207,7 @@ export default function ManageColdCallsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-500 mb-2">
+              <label className="block text-sm font-medium text-muted-foreground mb-2">
                 Buscar
               </label>
               <input
@@ -215,18 +215,18 @@ export default function ManageColdCallsPage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Nome, empresa ou BDR..."
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 placeholder-gray-500"
+                className="w-full p-2 border border-input bg-background text-foreground rounded-md focus:ring-2 focus:ring-ring placeholder-muted-foreground transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-500 mb-2">
+              <label className="block text-sm font-medium text-muted-foreground mb-2">
                 Ordenar por
               </label>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as 'date' | 'score')}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 placeholder-gray-500"
+                className="w-full p-2 border border-input bg-background text-foreground rounded-md focus:ring-2 focus:ring-ring placeholder-muted-foreground transition-colors"
               >
                 <option value="date">Data</option>
                 <option value="score">Score Médio</option>
@@ -234,13 +234,13 @@ export default function ManageColdCallsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-500 mb-2">
+              <label className="block text-sm font-medium text-muted-foreground mb-2">
                 Ordem
               </label>
               <select
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 placeholder-gray-500"
+                className="w-full p-2 border border-input bg-background text-foreground rounded-md focus:ring-2 focus:ring-ring placeholder-muted-foreground transition-colors"
               >
                 <option value="desc">Decrescente</option>
                 <option value="asc">Crescente</option>
@@ -250,15 +250,15 @@ export default function ManageColdCallsPage() {
         </div>
 
         {/* Lista de Cold Calls */}
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">
+        <div className="bg-card rounded-lg shadow-sm border border-border overflow-hidden">
+          <div className="px-6 py-4 border-b border-border">
+            <h2 className="text-lg font-semibold text-foreground">
               Análises ({filteredColdCalls.length})
             </h2>
           </div>
 
           {filteredColdCalls.length === 0 ? (
-            <div className="p-8 text-center text-gray-700">
+            <div className="p-8 text-center text-muted-foreground">
               <p>Nenhuma análise encontrada.</p>
             </div>
           ) : (
@@ -266,37 +266,37 @@ export default function ManageColdCallsPage() {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Prospect
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       BDR
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Score Médio
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Data
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Ações
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-card divide-y divide-border">
                   {filteredColdCalls.map((coldCall) => (
-                    <tr key={coldCall.id} className="hover:bg-gray-50">
+                    <tr key={coldCall.id} className="hover:bg-muted/50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-foreground">
                             {coldCall.prospectNome}
                           </div>
-                          <div className="text-sm text-gray-700">
+                          <div className="text-sm text-muted-foreground">
                             {coldCall.prospectEmpresa}
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                         {coldCall.bdr.nome}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -304,7 +304,7 @@ export default function ManageColdCallsPage() {
                           {getAverageScore(coldCall)}/10
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                         {new Date(coldCall.createdAt).toLocaleDateString('pt-BR')}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

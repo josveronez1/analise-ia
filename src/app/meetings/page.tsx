@@ -14,12 +14,6 @@ interface PreviousAnalysis {
   dataReuniao: string;
   resumo: string;
   metas: string;
-  warmerScore: number;
-  reframeScore: number;
-  rationalDrowningScore: number;
-  emotionalImpactScore: number;
-  newWayScore: number;
-  yourSolutionScore: number;
   pontosAtencao: string;
   recomendacoes: string;
   analiseCompleta: string;
@@ -34,12 +28,6 @@ interface AnalysisResult {
   dataReuniao: string;
   resumo: string;
   metas: string;
-  warmerScore: number;
-  reframeScore: number;
-  rationalDrowningScore: number;
-  emotionalImpactScore: number;
-  newWayScore: number;
-  yourSolutionScore: number;
   pontosAtencao: string;
   recomendacoes: string;
   analiseCompleta: string;
@@ -255,22 +243,22 @@ export default function MeetingsPage() {
         )}
 
         {/* Seleção de BDR */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Selecionar BDR</h2>
+        <div className="bg-card rounded-lg shadow-sm border border-border p-6 mb-6">
+          <h2 className="text-xl font-semibold text-foreground mb-4">Selecionar BDR</h2>
           
           <div className="max-w-md">
-            <label className="block text-sm font-medium text-gray-500 mb-2">
+            <label className="block text-sm font-medium text-muted-foreground mb-2">
               BDR *
             </label>
             {isLoadingBdrs ? (
-              <div className="w-full p-3 border border-gray-300 rounded-md bg-gray-100 animate-pulse">
+              <div className="w-full p-3 border border-input rounded-md bg-muted animate-pulse">
                 Carregando BDRs...
               </div>
             ) : (
               <select
                 value={selectedBdr || ''}
                 onChange={(e) => handleBdrChange(parseInt(e.target.value))}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-500"
+                className="w-full p-3 border border-input bg-background text-foreground rounded-md focus:ring-2 focus:ring-ring focus:border-transparent placeholder-muted-foreground transition-colors"
               >
                 <option value="">Selecione um BDR</option>
                 {bdrs.map((bdr) => (
@@ -287,15 +275,15 @@ export default function MeetingsPage() {
         {selectedBdr && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Lado Esquerdo - Análise Anterior */}
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            <div className="bg-card rounded-lg shadow-sm border border-border p-6">
+              <h2 className="text-xl font-semibold text-foreground mb-4">
                 Análise Anterior - {selectedBdrName}
               </h2>
               
               {isLoadingPrevious ? (
                 <div className="flex items-center justify-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                  <span className="ml-2 text-gray-600">Carregando análise anterior...</span>
+                  <span className="ml-2 text-muted-foreground">Carregando análise anterior...</span>
                 </div>
               ) : previousAnalysis ? (
                 <div className="space-y-4">
@@ -306,74 +294,36 @@ export default function MeetingsPage() {
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">Resumo da Reunião</h3>
-                    <div className="bg-gray-50 p-3 rounded-md">
+                    <h3 className="font-semibold text-foreground mb-2">Resumo da Reunião</h3>
+                    <div className="bg-muted p-3 rounded-md">
                       <MarkdownRenderer content={previousAnalysis.resumo} />
                     </div>
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">Metas Definidas</h3>
-                    <div className="bg-green-50 p-3 rounded-md">
+                    <h3 className="font-semibold text-foreground mb-2">Metas Definidas</h3>
+                    <div className="bg-muted p-3 rounded-md">
                       <MarkdownRenderer content={previousAnalysis.metas} />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="text-center p-2 bg-blue-50 rounded">
-                      <div className="text-lg font-bold text-blue-600">
-                        {previousAnalysis.warmerScore}/10
-                      </div>
-                      <div className="text-xs text-gray-900">Warmer</div>
-                    </div>
-                    <div className="text-center p-2 bg-green-50 rounded">
-                      <div className="text-lg font-bold text-green-600">
-                        {previousAnalysis.reframeScore}/10
-                      </div>
-                      <div className="text-xs text-gray-900">Reframe</div>
-                    </div>
-                    <div className="text-center p-2 bg-yellow-50 rounded">
-                      <div className="text-lg font-bold text-yellow-600">
-                        {previousAnalysis.rationalDrowningScore}/10
-                      </div>
-                      <div className="text-xs text-gray-900">Rational Drowning</div>
-                    </div>
-                    <div className="text-center p-2 bg-purple-50 rounded">
-                      <div className="text-lg font-bold text-purple-600">
-                        {previousAnalysis.emotionalImpactScore}/10
-                      </div>
-                      <div className="text-xs text-gray-900">Emotional Impact</div>
-                    </div>
-                    <div className="text-center p-2 bg-red-50 rounded">
-                      <div className="text-lg font-bold text-red-600">
-                        {previousAnalysis.newWayScore}/10
-                      </div>
-                      <div className="text-xs text-gray-900">New Way</div>
-                    </div>
-                    <div className="text-center p-2 bg-indigo-50 rounded">
-                      <div className="text-lg font-bold text-indigo-600">
-                        {previousAnalysis.yourSolutionScore}/10
-                      </div>
-                      <div className="text-xs text-gray-900">Your Solution</div>
-                    </div>
-                  </div>
 
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">Pontos de Atenção</h3>
-                    <div className="bg-yellow-50 p-3 rounded-md">
+                    <h3 className="font-semibold text-foreground mb-2">Pontos de Atenção</h3>
+                    <div className="bg-muted p-3 rounded-md">
                       <MarkdownRenderer content={previousAnalysis.pontosAtencao} />
                     </div>
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">Recomendações</h3>
-                    <div className="bg-green-50 p-3 rounded-md">
+                    <h3 className="font-semibold text-foreground mb-2">Recomendações</h3>
+                    <div className="bg-muted p-3 rounded-md">
                       <MarkdownRenderer content={previousAnalysis.recomendacoes} />
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-muted-foreground">
                   <p className="text-lg font-medium mb-2">Nenhuma análise anterior encontrada</p>
                   <p className="text-sm">Esta será a primeira análise para este BDR</p>
                 </div>
@@ -381,33 +331,33 @@ export default function MeetingsPage() {
             </div>
 
             {/* Lado Direito - Nova Análise */}
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            <div className="bg-card rounded-lg shadow-sm border border-border p-6">
+              <h2 className="text-xl font-semibold text-foreground mb-4">
                 Nova Análise - {selectedBdrName}
               </h2>
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-2">
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
                     Data da Reunião *
                   </label>
                   <input
                     type="date"
                     value={dataReuniao}
                     onChange={(e) => setDataReuniao(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full p-3 border border-input bg-background text-foreground rounded-md focus:ring-2 focus:ring-ring focus:border-transparent transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-2">
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
                     Arquivo de Áudio *
                   </label>
                   <input
                     type="file"
                     accept="audio/*"
                     onChange={handleFileChange}
-                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full p-3 border border-input bg-background text-foreground rounded-md focus:ring-2 focus:ring-ring focus:border-transparent transition-colors"
                   />
                   {audioFile && (
                     <div className="mt-2 p-3 bg-blue-50 rounded-md">
@@ -419,7 +369,7 @@ export default function MeetingsPage() {
                       </p>
                     </div>
                   )}
-                  <p className="text-xs text-gray-700 mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     Formatos aceitos: MP3, WAV, M4A, etc. Máximo: 25MB
                   </p>
                 </div>
@@ -458,12 +408,12 @@ export default function MeetingsPage() {
 
         {/* Instruções quando nenhum BDR está selecionado */}
         {!selectedBdr && (
-          <div className="bg-white rounded-lg shadow-md p-8 text-center">
+          <div className="bg-card rounded-lg shadow-sm border border-border p-8 text-center">
             <div className="text-6xl mb-4">🎯</div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            <h2 className="text-xl font-semibold text-foreground mb-2">
               Selecione um BDR para começar
             </h2>
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               Escolha um BDR acima para ver a análise anterior e realizar uma nova análise de reunião 1:1
             </p>
           </div>

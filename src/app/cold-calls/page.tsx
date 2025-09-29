@@ -192,23 +192,23 @@ export default function ColdCallsPage() {
           </div>
         )}
 
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Dados do Cold Call</h2>
+        <div className="bg-card rounded-lg shadow-sm border border-border p-6 mb-6">
+          <h2 className="text-xl font-semibold text-foreground mb-4">Dados do Cold Call</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-500 mb-2">
+              <label className="block text-sm font-medium text-muted-foreground mb-2">
                 BDR *
               </label>
               {isLoadingBdrs ? (
-                <div className="w-full p-3 border border-gray-300 rounded-md bg-gray-100 animate-pulse">
+                <div className="w-full p-3 border border-input rounded-md bg-muted animate-pulse">
                   Carregando BDRs...
                 </div>
               ) : (
                 <select
                   value={selectedBdr || ''}
                   onChange={(e) => setSelectedBdr(parseInt(e.target.value))}
-                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-500"
+                  className="w-full p-3 border border-input bg-background text-foreground rounded-md focus:ring-2 focus:ring-ring focus:border-transparent placeholder-muted-foreground transition-colors"
                 >
                   <option value="">Selecione um BDR</option>
                   {bdrs.map((bdr) => (
@@ -221,52 +221,52 @@ export default function ColdCallsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-500 mb-2">
+              <label className="block text-sm font-medium text-muted-foreground mb-2">
                 Nome do Prospect *
               </label>
               <input
                 type="text"
                 value={prospectNome}
                 onChange={(e) => setProspectNome(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-500"
+                className="w-full p-3 border border-input bg-background text-foreground rounded-md focus:ring-2 focus:ring-ring focus:border-transparent placeholder-muted-foreground transition-colors"
                 placeholder="Nome do prospect (mín. 2 caracteres)"
                 maxLength={100}
               />
-              <p className="text-xs text-gray-700 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 {prospectNome.length}/100 caracteres
               </p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-500 mb-2">
+              <label className="block text-sm font-medium text-muted-foreground mb-2">
                 Empresa do Prospect *
               </label>
               <input
                 type="text"
                 value={prospectEmpresa}
                 onChange={(e) => setProspectEmpresa(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-500"
+                className="w-full p-3 border border-input bg-background text-foreground rounded-md focus:ring-2 focus:ring-ring focus:border-transparent placeholder-muted-foreground transition-colors"
                 placeholder="Empresa do prospect (mín. 2 caracteres)"
                 maxLength={100}
               />
-              <p className="text-xs text-gray-700 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 {prospectEmpresa.length}/100 caracteres
               </p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-500 mb-2">
+              <label className="block text-sm font-medium text-muted-foreground mb-2">
                 Insight Comercial (Opcional)
               </label>
               <input
                 type="text"
                 value={insightComercial}
                 onChange={(e) => setInsightComercial(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-500"
+                className="w-full p-3 border border-input bg-background text-foreground rounded-md focus:ring-2 focus:ring-ring focus:border-transparent placeholder-muted-foreground transition-colors"
                 placeholder="Insight comercial sobre o prospect"
                 maxLength={200}
               />
-              <p className="text-xs text-gray-700 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 {insightComercial.length}/200 caracteres
               </p>
             </div>
@@ -280,7 +280,7 @@ export default function ColdCallsPage() {
               type="file"
               accept="audio/*"
               onChange={handleFileChange}
-              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-500"
+              className="w-full p-3 border border-input bg-background text-foreground rounded-md focus:ring-2 focus:ring-ring focus:border-transparent placeholder-muted-foreground transition-colors"
             />
             {audioFile && (
               <div className="mt-2 p-3 bg-blue-50 rounded-md">
@@ -292,7 +292,7 @@ export default function ColdCallsPage() {
                 </p>
               </div>
             )}
-            <p className="text-xs text-gray-700 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               Formatos aceitos: MP3, WAV, M4A, etc. Máximo: 25MB
             </p>
           </div>
@@ -317,10 +317,10 @@ export default function ColdCallsPage() {
         </div>
 
         {analysisResult && (
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-card rounded-lg shadow-sm border border-border p-6">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">Resultado da Análise</h2>
-              <span className="text-sm text-gray-700">
+              <h2 className="text-xl font-semibold text-foreground">Resultado da Análise</h2>
+              <span className="text-sm text-muted-foreground">
                 {new Date(analysisResult.createdAt).toLocaleString('pt-BR')}
               </span>
             </div>
@@ -330,51 +330,51 @@ export default function ColdCallsPage() {
                 <div className="text-2xl font-bold text-blue-600">
                   {analysisResult.warmerScore}/10
                 </div>
-                <div className="text-sm text-gray-900">Warmer</div>
+                <div className="text-sm text-foreground">Warmer</div>
               </div>
               <div className="text-center p-4 bg-green-50 rounded-lg">
                 <div className="text-2xl font-bold text-green-600">
                   {analysisResult.reframeScore}/10
                 </div>
-                <div className="text-sm text-gray-900">Reframe</div>
+                <div className="text-sm text-foreground">Reframe</div>
               </div>
               <div className="text-center p-4 bg-yellow-50 rounded-lg">
                 <div className="text-2xl font-bold text-yellow-600">
                   {analysisResult.rationalDrowningScore}/10
                 </div>
-                <div className="text-sm text-gray-900">Rational Drowning</div>
+                <div className="text-sm text-foreground">Rational Drowning</div>
               </div>
               <div className="text-center p-4 bg-purple-50 rounded-lg">
                 <div className="text-2xl font-bold text-purple-600">
                   {analysisResult.emotionalImpactScore}/10
                 </div>
-                <div className="text-sm text-gray-900">Emotional Impact</div>
+                <div className="text-sm text-foreground">Emotional Impact</div>
               </div>
               <div className="text-center p-4 bg-red-50 rounded-lg">
                 <div className="text-2xl font-bold text-red-600">
                   {analysisResult.newWayScore}/10
                 </div>
-                <div className="text-sm text-gray-900">New Way</div>
+                <div className="text-sm text-foreground">New Way</div>
               </div>
               <div className="text-center p-4 bg-indigo-50 rounded-lg">
                 <div className="text-2xl font-bold text-indigo-600">
                   {analysisResult.yourSolutionScore}/10
                 </div>
-                <div className="text-sm text-gray-900">Your Solution</div>
+                <div className="text-sm text-foreground">Your Solution</div>
               </div>
             </div>
 
             <div className="space-y-4">
               <div>
-                <h3 className="font-semibold text-gray-900 mb-2">Pontos de Atenção</h3>
-                <p className="text-gray-700 whitespace-pre-line bg-yellow-50 p-3 rounded-md">
+                <h3 className="font-semibold text-foreground mb-2">Pontos de Atenção</h3>
+                <p className="text-foreground whitespace-pre-line bg-muted p-3 rounded-md">
                   {analysisResult.pontosAtencao}
                 </p>
               </div>
               
               <div>
-                <h3 className="font-semibold text-gray-900 mb-2">Recomendações</h3>
-                <p className="text-gray-700 whitespace-pre-line bg-green-50 p-3 rounded-md">
+                <h3 className="font-semibold text-foreground mb-2">Recomendações</h3>
+                <p className="text-foreground whitespace-pre-line bg-muted p-3 rounded-md">
                   {analysisResult.recomendacoes}
                 </p>
               </div>
