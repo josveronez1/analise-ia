@@ -6,41 +6,23 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// POST - Analisar Cold Call via Blob Storage
+// POST - Analisar Cold Call
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { bdrId, prospectNome, prospectEmpresa, insightComercial, audioUrl } = body;
+    const formData = await request.formData();
+    const bdrId = parseInt(formData.get('bdrId') as string);
+    const prospectNome = formData.get('prospectNome') as string;
+    const prospectEmpresa = formData.get('prospectEmpresa') as string;
+    const insightComercial = formData.get('insightComercial') as string;
+    const audioFile = formData.get('audioFile') as File;
 
     // Validar dados
-    if (!bdrId || !prospectNome || !prospectEmpresa || !audioUrl) {
+    if (!bdrId || !prospectNome || !prospectEmpresa || !audioFile) {
       return NextResponse.json(
         { error: 'Dados obrigatórios não fornecidos' },
         { status: 400 }
       );
     }
-
-    // Validar URL
-    try {
-      new URL(audioUrl);
-    } catch {
-      return NextResponse.json(
-        { error: 'URL inválida' },
-        { status: 400 }
-      );
-    }
-
-    // Baixar arquivo do Blob Storage
-    const response = await fetch(audioUrl);
-    if (!response.ok) {
-      return NextResponse.json(
-        { error: 'Erro ao baixar arquivo de áudio' },
-        { status: 400 }
-      );
-    }
-
-    const audioBuffer = await response.arrayBuffer();
-    const audioFile = new File([audioBuffer], 'audio.mp3', { type: 'audio/mpeg' });
 
     // Transcrever áudio com Whisper
     const transcription = await openai.audio.transcriptions.create({
