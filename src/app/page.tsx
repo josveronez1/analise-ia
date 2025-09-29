@@ -144,15 +144,15 @@ export default function Home() {
   if (!data) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
       <Navigation />
       
       <div className="max-w-7xl mx-auto p-6">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-            <p className="text-gray-600 mt-1">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-1">
               Análise de Cold Calls - {getPeriodLabel(data.period)} - {getBdrLabel()}
             </p>
           </div>
@@ -186,8 +186,8 @@ export default function Home() {
               <ChartBarIcon className="h-6 w-6 text-blue-600" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Total de Análises</p>
-              <p className="text-2xl font-bold text-gray-900">{data.totalAnalises}</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Total de Análises</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{data.totalAnalises}</p>
             </div>
           </Card>
 
@@ -196,8 +196,8 @@ export default function Home() {
               <UserGroupIcon className="h-6 w-6 text-green-600" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">BDRs Analisados</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-300">BDRs Analisados</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 {data.bdrId ? '1' : data.bdrs.length}
               </p>
             </div>
@@ -208,8 +208,8 @@ export default function Home() {
               <CalendarIcon className="h-6 w-6 text-purple-600" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Período</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Período</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 {getPeriodLabel(data.period)}
               </p>
             </div>
@@ -226,9 +226,9 @@ export default function Home() {
             {data.totalAnalises > 0 ? (
               <RadarChart data={radarData} />
             ) : (
-              <div className="h-80 flex items-center justify-center text-gray-500">
+              <div className="h-80 flex items-center justify-center text-gray-500 dark:text-gray-400">
                 <div className="text-center">
-                  <ChartBarIcon className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                  <ChartBarIcon className="h-12 w-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
                   <p>Nenhuma análise encontrada</p>
                   <p className="text-sm">Realize análises de Cold Calls para ver os dados</p>
                 </div>
@@ -246,9 +246,9 @@ export default function Home() {
                 <MarkdownRenderer content={data.analysisText} />
               </div>
             ) : (
-              <div className="h-80 flex items-center justify-center text-gray-500">
+              <div className="h-80 flex items-center justify-center text-gray-500 dark:text-gray-400">
                 <div className="text-center">
-                  <ChartBarIcon className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                  <ChartBarIcon className="h-12 w-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
                   <p>Nenhuma análise disponível</p>
                   <p className="text-sm">Realize análises de Cold Calls para ver insights</p>
                 </div>
