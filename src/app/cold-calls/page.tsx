@@ -165,19 +165,19 @@ export default function ColdCallsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background transition-colors">
       <Navigation />
       
       <div className="max-w-4xl mx-auto p-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
+        <h1 className="text-3xl font-bold text-foreground mb-8">
           Análise de Cold Calls
         </h1>
 
         {/* Mensagens de Sucesso/Erro */}
         {success && (
-          <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-md flex justify-between items-center">
+          <div className="mb-6 p-4 bg-green-100 dark:bg-green-900/20 border border-green-400 dark:border-green-600 text-green-700 dark:text-green-300 rounded-md flex justify-between items-center transition-colors">
             <span>{success}</span>
-            <button onClick={clearMessages} className="text-green-700 hover:text-green-900">
+            <button onClick={clearMessages} className="text-green-700 dark:text-green-300 hover:text-green-900 dark:hover:text-green-100">
               ✕
             </button>
           </div>

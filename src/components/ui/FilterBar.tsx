@@ -17,7 +17,7 @@ export const FilterSelect: React.FC<FilterSelectProps> = ({
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+      className="px-3 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-colors"
     >
       <option value="">{placeholder}</option>
       {options.map((option) => (
@@ -36,7 +36,7 @@ interface FilterBarProps {
 
 const FilterBar: React.FC<FilterBarProps> = ({ children, className = '' }) => {
   return (
-    <div className={`flex flex-wrap gap-4 items-center p-4 bg-gray-50 rounded-lg border ${className}`}>
+    <div className={`flex flex-wrap gap-4 items-center p-4 bg-muted rounded-lg border border-border transition-colors ${className}`}>
       {children}
     </div>
   );

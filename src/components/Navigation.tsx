@@ -17,13 +17,13 @@ export default function Navigation() {
   ];
 
   return (
-    <nav className="bg-white dark:bg-gray-900 shadow-lg border-b border-gray-200 dark:border-gray-700 transition-colors">
+    <nav className="bg-card border-b border-border shadow-sm transition-colors">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <span className="text-2xl">🎯</span>
-            <span className="text-xl font-bold text-gray-900 dark:text-white">
+            <span className="text-xl font-bold text-foreground">
               Análise BDRs
             </span>
           </Link>
@@ -36,8 +36,8 @@ export default function Navigation() {
                 href={item.href}
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   pathname === item.href
-                    ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
-                    : 'text-gray-900 dark:text-gray-100 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-foreground hover:text-foreground hover:bg-accent'
                 }`}
               >
                 {item.label}
@@ -47,7 +47,7 @@ export default function Navigation() {
             {/* Dark Mode Toggle */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-md text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="p-2 rounded-md text-foreground hover:bg-accent transition-colors"
               aria-label="Toggle dark mode"
             >
               {theme === 'light' ? (
@@ -67,7 +67,7 @@ export default function Navigation() {
             {/* Dark Mode Toggle Mobile */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-md text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="p-2 rounded-md text-foreground hover:bg-accent transition-colors"
               aria-label="Toggle dark mode"
             >
               {theme === 'light' ? (
@@ -81,7 +81,7 @@ export default function Navigation() {
               )}
             </button>
             
-            <button className="text-gray-900 dark:text-gray-100 hover:text-gray-900 dark:hover:text-white">
+            <button className="text-foreground hover:text-foreground">
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>

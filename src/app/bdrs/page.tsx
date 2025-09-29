@@ -141,7 +141,7 @@ export default function BDRsPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background transition-colors">
         <Navigation />
         <div className="max-w-4xl mx-auto p-6">
           <div className="flex items-center justify-center h-64">
