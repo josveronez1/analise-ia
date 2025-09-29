@@ -91,21 +91,11 @@ export async function POST(request: NextRequest) {
 
     const analysisText = analysis.choices[0].message.content || '';
 
-    // Extrair scores
-    const scores = {
-      warmerScore: extractScore(analysisText, 'Warmer'),
-      reframeScore: extractScore(analysisText, 'Reframe'),
-      rationalDrowningScore: extractScore(analysisText, 'Rational Drowning'),
-      emotionalImpactScore: extractScore(analysisText, 'Emotional Impact'),
-      newWayScore: extractScore(analysisText, 'New Way'),
-      yourSolutionScore: extractScore(analysisText, 'Your Solution'),
-    };
-
-    // Extrair seções
-    const resumoGerado = extractSection(analysisText, 'RESUMO DA REUNIÃO');
-    const metasGeradas = extractSection(analysisText, 'METAS DEFINIDAS');
-    const pontosAtencao = extractSection(analysisText, 'PONTOS DE ATENÇÃO');
-    const recomendacoes = extractSection(analysisText, 'RECOMENDAÇÕES');
+    // Extrair seções do novo formato
+    const resumoGerado = extractSection(analysisText, 'RESUMO GERAL DA REUNIÃO');
+    const metasGeradas = extractSection(analysisText, 'FOCO PARA A PRÓXIMA SEMANA');
+    const pontosAtencao = extractSection(analysisText, 'DESAFIOS E PONTOS DE MELHORIA');
+    const recomendacoes = extractSection(analysisText, 'PONTOS DE APOIO DO GESTOR');
 
     // Salvar no banco
     const meeting = await prisma.meeting.create({
@@ -114,7 +104,13 @@ export async function POST(request: NextRequest) {
         dataReuniao: new Date(dataReuniao),
         resumo: resumoGerado,
         metas: metasGeradas,
-        ...scores,
+        // Scores padrão (não usados mais no novo formato)
+        warmerScore: 0,
+        reframeScore: 0,
+        rationalDrowningScore: 0,
+        emotionalImpactScore: 0,
+        newWayScore: 0,
+        yourSolutionScore: 0,
         analiseCompleta: analysisText,
         pontosAtencao,
         recomendacoes,
