@@ -12,7 +12,6 @@ export default function Navigation() {
     { href: '/', label: 'Dashboard' },
     { href: '/cold-calls', label: 'Cold Calls' },
     { href: '/meetings', label: 'Reuniões 1:1' },
-    { href: '/cold-calls/manage', label: 'Gerenciar Cold Calls' },
     { href: '/bdrs', label: 'BDRs' },
   ];
 

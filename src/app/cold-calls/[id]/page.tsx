@@ -103,7 +103,7 @@ export default function ColdCallDetailsPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background transition-colors">
         <Navigation />
         <div className="max-w-7xl mx-auto p-6">
           <LoadingSpinner size="lg" text="Carregando análise..." className="h-64" />
@@ -114,12 +114,12 @@ export default function ColdCallDetailsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background transition-colors">
         <Navigation />
         <div className="max-w-7xl mx-auto p-6">
-          <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-md flex justify-between items-center">
+          <div className="p-4 bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-300 rounded-md flex justify-between items-center transition-colors">
             <span>{error}</span>
-            <button onClick={clearMessages} className="text-red-700 hover:text-red-900">
+            <button onClick={clearMessages} className="text-red-700 dark:text-red-300 hover:text-red-900 dark:hover:text-red-100">
               ✕
             </button>
           </div>
@@ -140,13 +140,13 @@ export default function ColdCallDetailsPage() {
           <div className="flex items-center">
             <button
               onClick={() => router.back()}
-              className="mr-4 p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md"
+              className="mr-4 p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
             >
               <ArrowLeftIcon className="h-5 w-5" />
             </button>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Análise Detalhada</h1>
-              <p className="text-gray-600 mt-1">
+              <h1 className="text-3xl font-bold text-foreground">Análise Detalhada</h1>
+              <p className="text-muted-foreground mt-1">
                 {data.coldCall.prospectNome} - {data.coldCall.prospectEmpresa}
               </p>
             </div>
@@ -157,36 +157,36 @@ export default function ColdCallDetailsPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card>
             <div className="flex items-center">
-              <div className="p-3 bg-blue-100 rounded-full mr-4">
+              <div className="p-3 bg-muted rounded-full mr-4">
                 <span className="text-2xl">👤</span>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-600">BDR</p>
-                <p className="text-lg font-bold text-gray-900">{data.coldCall.bdr.nome}</p>
+                <p className="text-sm font-medium text-muted-foreground">BDR</p>
+                <p className="text-lg font-bold text-foreground">{data.coldCall.bdr.nome}</p>
               </div>
             </div>
           </Card>
 
           <Card>
             <div className="flex items-center">
-              <div className="p-3 bg-green-100 rounded-full mr-4">
+              <div className="p-3 bg-muted rounded-full mr-4">
                 <span className="text-2xl">🏢</span>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-600">Prospect</p>
-                <p className="text-lg font-bold text-gray-900">{data.coldCall.prospectNome}</p>
+                <p className="text-sm font-medium text-muted-foreground">Prospect</p>
+                <p className="text-lg font-bold text-foreground">{data.coldCall.prospectNome}</p>
               </div>
             </div>
           </Card>
 
           <Card>
             <div className="flex items-center">
-              <div className="p-3 bg-purple-100 rounded-full mr-4">
+              <div className="p-3 bg-muted rounded-full mr-4">
                 <span className="text-2xl">📅</span>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-600">Data da Análise</p>
-                <p className="text-lg font-bold text-gray-900">
+                <p className="text-sm font-medium text-muted-foreground">Data da Análise</p>
+                <p className="text-lg font-bold text-foreground">
                   {new Date(data.coldCall.createdAt).toLocaleDateString('pt-BR')}
                 </p>
               </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 
 interface BDR {
@@ -25,7 +26,25 @@ interface AnalysisResult {
   createdAt: string;
 }
 
+interface ColdCall {
+  id: number;
+  prospectNome: string;
+  prospectEmpresa: string;
+  insightComercial: string | null;
+  warmerScore: number;
+  reframeScore: number;
+  rationalDrowningScore: number;
+  emotionalImpactScore: number;
+  newWayScore: number;
+  yourSolutionScore: number;
+  pontosAtencao: string;
+  recomendacoes: string;
+  createdAt: string;
+  bdr: BDR;
+}
+
 export default function ColdCallsPage() {
+  // Estados para nova análise
   const [bdrs, setBdrs] = useState<BDR[]>([]);
   const [selectedBdr, setSelectedBdr] = useState<number | null>(null);
   const [prospectNome, setProspectNome] = useState('');
@@ -38,9 +57,20 @@ export default function ColdCallsPage() {
   const [success, setSuccess] = useState<string | null>(null);
   const [isLoadingBdrs, setIsLoadingBdrs] = useState(true);
 
-  // Carregar BDRs
+  // Estados para gerenciamento
+  const [coldCalls, setColdCalls] = useState<ColdCall[]>([]);
+  const [isLoadingColdCalls, setIsLoadingColdCalls] = useState(true);
+  
+  // Filtros para gerenciamento
+  const [manageSelectedBdr, setManageSelectedBdr] = useState<number | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState<'date' | 'score'>('date');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+
+  // Carregar dados
   useEffect(() => {
     loadBdrs();
+    loadColdCalls();
   }, []);
 
   const loadBdrs = async () => {
@@ -54,106 +84,85 @@ export default function ColdCallsPage() {
       setBdrs(data);
     } catch (error) {
       console.error('Erro ao carregar BDRs:', error);
-      setError('Erro ao carregar lista de BDRs');
+      setError('Erro ao carregar BDRs');
     } finally {
       setIsLoadingBdrs(false);
+    }
+  };
+
+  const loadColdCalls = async () => {
+    try {
+      setIsLoadingColdCalls(true);
+      const response = await fetch('/api/cold-calls');
+      if (!response.ok) {
+        throw new Error('Erro ao carregar cold calls');
+      }
+      const data = await response.json();
+      setColdCalls(data);
+    } catch (error) {
+      console.error('Erro ao carregar cold calls:', error);
+      setError('Erro ao carregar cold calls');
+    } finally {
+      setIsLoadingColdCalls(false);
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validar tipo de arquivo
-      if (!file.type.startsWith('audio/')) {
-        setError('Por favor, selecione um arquivo de áudio válido');
-        return;
-      }
-      
-      // Validar tamanho (máximo 25MB)
-      const maxSize = 25 * 1024 * 1024; // 25MB
-      if (file.size > maxSize) {
+      if (file.size > 25 * 1024 * 1024) {
         setError('Arquivo muito grande. Máximo permitido: 25MB');
         return;
       }
-      
       setAudioFile(file);
       setError(null);
     }
   };
 
-  const validateForm = () => {
-    if (!selectedBdr) {
-      setError('Selecione um BDR');
-      return false;
-    }
-    if (!prospectNome.trim()) {
-      setError('Nome do prospect é obrigatório');
-      return false;
-    }
-    if (prospectNome.trim().length < 2) {
-      setError('Nome do prospect deve ter pelo menos 2 caracteres');
-      return false;
-    }
-    if (!prospectEmpresa.trim()) {
-      setError('Empresa do prospect é obrigatória');
-      return false;
-    }
-    if (prospectEmpresa.trim().length < 2) {
-      setError('Empresa deve ter pelo menos 2 caracteres');
-      return false;
-    }
-    if (!audioFile) {
-      setError('Arquivo de áudio é obrigatório');
-      return false;
-    }
-    return true;
-  };
-
   const handleAnalyze = async () => {
-    setError(null);
-    setSuccess(null);
-    
-    if (!validateForm()) {
+    if (!selectedBdr || !prospectNome || !prospectEmpresa || !audioFile) {
+      setError('Todos os campos obrigatórios devem ser preenchidos');
       return;
     }
 
     setIsAnalyzing(true);
-    setAnalysisResult(null);
+    setError(null);
+    setSuccess(null);
 
     try {
       const formData = new FormData();
-      formData.append('bdrId', selectedBdr!.toString());
-      formData.append('prospectNome', prospectNome.trim());
-      formData.append('prospectEmpresa', prospectEmpresa.trim());
-      formData.append('insightComercial', insightComercial.trim());
-      formData.append('audioFile', audioFile!);
+      formData.append('audioFile', audioFile);
+      formData.append('bdrId', selectedBdr.toString());
+      formData.append('prospectNome', prospectNome);
+      formData.append('prospectEmpresa', prospectEmpresa);
+      formData.append('insightComercial', insightComercial);
 
       const response = await fetch('/api/cold-calls', {
         method: 'POST',
         body: formData,
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        setAnalysisResult(result);
-        setSuccess('Análise concluída com sucesso!');
-        
-        // Limpar formulário
-        setProspectNome('');
-        setProspectEmpresa('');
-        setInsightComercial('');
-        setAudioFile(null);
-        setSelectedBdr(null);
-        
-        // Limpar mensagem de sucesso após 5 segundos
-        setTimeout(() => setSuccess(null), 5000);
-      } else {
+      if (!response.ok) {
         const errorData = await response.json();
-        setError(errorData.error || 'Erro ao analisar cold call');
+        throw new Error(errorData.error || 'Erro ao analisar cold call');
       }
+
+      const result = await response.json();
+      setAnalysisResult(result);
+      setSuccess('Análise concluída com sucesso!');
+      
+      // Limpar formulário
+      setSelectedBdr(null);
+      setProspectNome('');
+      setProspectEmpresa('');
+      setInsightComercial('');
+      setAudioFile(null);
+      
+      // Recarregar lista de cold calls
+      loadColdCalls();
     } catch (error) {
-      console.error('Erro ao analisar:', error);
-      setError('Erro de conexão. Tente novamente.');
+      console.error('Erro na análise:', error);
+      setError(error instanceof Error ? error.message : 'Erro interno do servidor');
     } finally {
       setIsAnalyzing(false);
     }
@@ -164,14 +173,89 @@ export default function ColdCallsPage() {
     setSuccess(null);
   };
 
+  const handleDelete = async (id: number) => {
+    if (!confirm('Tem certeza que deseja deletar esta análise?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/cold-calls/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao deletar análise');
+      }
+
+      setSuccess('Análise deletada com sucesso!');
+      loadColdCalls();
+    } catch (error) {
+      console.error('Erro ao deletar:', error);
+      setError('Erro ao deletar análise');
+    }
+  };
+
+  const getAverageScore = (coldCall: ColdCall) => {
+    const scores = [
+      coldCall.warmerScore,
+      coldCall.reframeScore,
+      coldCall.rationalDrowningScore,
+      coldCall.emotionalImpactScore,
+      coldCall.newWayScore,
+      coldCall.yourSolutionScore,
+    ];
+    const average = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+    return average.toFixed(1);
+  };
+
+  const getScoreColor = (score: number) => {
+    if (score >= 8) return 'bg-green-100 text-green-800';
+    if (score >= 6) return 'bg-yellow-100 text-yellow-800';
+    return 'bg-red-100 text-red-800';
+  };
+
+  const filteredColdCalls = coldCalls
+    .filter((coldCall) => {
+      if (manageSelectedBdr && coldCall.bdr.id !== manageSelectedBdr) return false;
+      if (searchTerm) {
+        const search = searchTerm.toLowerCase();
+        return (
+          coldCall.prospectNome.toLowerCase().includes(search) ||
+          coldCall.prospectEmpresa.toLowerCase().includes(search) ||
+          coldCall.bdr.nome.toLowerCase().includes(search)
+        );
+      }
+      return true;
+    })
+    .sort((a, b) => {
+      let aValue: number | string;
+      let bValue: number | string;
+
+      if (sortBy === 'score') {
+        aValue = parseFloat(getAverageScore(a));
+        bValue = parseFloat(getAverageScore(b));
+      } else {
+        aValue = new Date(a.createdAt).getTime();
+        bValue = new Date(b.createdAt).getTime();
+      }
+
+      if (sortOrder === 'asc') {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+
   return (
     <div className="min-h-screen bg-background transition-colors">
       <Navigation />
       
-      <div className="max-w-4xl mx-auto p-6">
-        <h1 className="text-3xl font-bold text-foreground mb-8">
-          Análise de Cold Calls
-        </h1>
+      <div className="max-w-7xl mx-auto p-6">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-foreground">
+            Cold Calls
+          </h1>
+        </div>
 
         {/* Mensagens de Sucesso/Erro */}
         {success && (
@@ -184,16 +268,17 @@ export default function ColdCallsPage() {
         )}
 
         {error && (
-          <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-md flex justify-between items-center">
+          <div className="mb-6 p-4 bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-300 rounded-md flex justify-between items-center transition-colors">
             <span>{error}</span>
-            <button onClick={clearMessages} className="text-red-700 hover:text-red-900">
+            <button onClick={clearMessages} className="text-red-700 dark:text-red-300 hover:text-red-900 dark:hover:text-red-100">
               ✕
             </button>
           </div>
         )}
 
-        <div className="bg-card rounded-lg shadow-sm border border-border p-6 mb-6">
-          <h2 className="text-xl font-semibold text-foreground mb-4">Dados do Cold Call</h2>
+        {/* Seção 1: Nova Análise */}
+        <div className="bg-card rounded-lg shadow-sm border border-border p-6 mb-8">
+          <h2 className="text-xl font-semibold text-foreground mb-4">Nova Análise de Cold Call</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
@@ -258,12 +343,12 @@ export default function ColdCallsPage() {
               <label className="block text-sm font-medium text-muted-foreground mb-2">
                 Insight Comercial (Opcional)
               </label>
-              <input
-                type="text"
+              <textarea
                 value={insightComercial}
                 onChange={(e) => setInsightComercial(e.target.value)}
                 className="w-full p-3 border border-input bg-background text-foreground rounded-md focus:ring-2 focus:ring-ring focus:border-transparent placeholder-muted-foreground transition-colors"
                 placeholder="Insight comercial sobre o prospect"
+                rows={3}
                 maxLength={200}
               />
               <p className="text-xs text-muted-foreground mt-1">
@@ -273,7 +358,7 @@ export default function ColdCallsPage() {
           </div>
 
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-500 mb-2">
+            <label className="block text-sm font-medium text-muted-foreground mb-2">
               Arquivo de Áudio *
             </label>
             <input
@@ -283,11 +368,11 @@ export default function ColdCallsPage() {
               className="w-full p-3 border border-input bg-background text-foreground rounded-md focus:ring-2 focus:ring-ring focus:border-transparent placeholder-muted-foreground transition-colors"
             />
             {audioFile && (
-              <div className="mt-2 p-3 bg-blue-50 rounded-md">
-                <p className="text-sm text-blue-700">
-                  <strong>Arquivo selecionado:</strong> {audioFile.name}
+              <div className="mt-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-md">
+                <p className="text-xs text-blue-600 dark:text-blue-300">
+                  Arquivo selecionado: {audioFile.name}
                 </p>
-                <p className="text-xs text-blue-600">
+                <p className="text-xs text-blue-600 dark:text-blue-300">
                   Tamanho: {(audioFile.size / 1024 / 1024).toFixed(2)} MB
                 </p>
               </div>
@@ -299,25 +384,169 @@ export default function ColdCallsPage() {
 
           <button
             onClick={handleAnalyze}
-            disabled={isAnalyzing || isLoadingBdrs}
-            className="w-full bg-blue-600 text-white py-3 px-6 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors duration-200 flex items-center justify-center"
+            disabled={isAnalyzing || !selectedBdr || !prospectNome || !prospectEmpresa || !audioFile}
+            className="w-full bg-primary text-primary-foreground py-3 px-4 rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {isAnalyzing ? (
-              <>
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Analisando...
-              </>
-            ) : (
-              'Analisar Cold Call'
-            )}
+            {isAnalyzing ? 'Analisando...' : 'Analisar Cold Call'}
           </button>
         </div>
 
+        {/* Seção 2: Análises Realizadas */}
+        <div className="bg-card rounded-lg shadow-sm border border-border p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold text-foreground">Análises Realizadas</h2>
+            <span className="text-sm text-muted-foreground">
+              {filteredColdCalls.length} análise(s) encontrada(s)
+            </span>
+          </div>
+
+          {/* Filtros */}
+          <div className="bg-muted rounded-lg p-4 mb-6">
+            <h3 className="text-lg font-semibold text-foreground mb-4">Filtros</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-2">
+                  BDR
+                </label>
+                <select
+                  value={manageSelectedBdr || ''}
+                  onChange={(e) => setManageSelectedBdr(e.target.value ? parseInt(e.target.value) : null)}
+                  className="w-full p-2 border border-input bg-background text-foreground rounded-md focus:ring-2 focus:ring-ring placeholder-muted-foreground transition-colors"
+                >
+                  <option value="">Todos os BDRs</option>
+                  {bdrs.map((bdr) => (
+                    <option key={bdr.id} value={bdr.id}>
+                      {bdr.nome}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-2">
+                  Buscar
+                </label>
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Nome, empresa ou BDR..."
+                  className="w-full p-2 border border-input bg-background text-foreground rounded-md focus:ring-2 focus:ring-ring placeholder-muted-foreground transition-colors"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-2">
+                  Ordenar por
+                </label>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as 'date' | 'score')}
+                  className="w-full p-2 border border-input bg-background text-foreground rounded-md focus:ring-2 focus:ring-ring placeholder-muted-foreground transition-colors"
+                >
+                  <option value="date">Data</option>
+                  <option value="score">Score Médio</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-2">
+                  Ordem
+                </label>
+                <select
+                  value={sortOrder}
+                  onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
+                  className="w-full p-2 border border-input bg-background text-foreground rounded-md focus:ring-2 focus:ring-ring placeholder-muted-foreground transition-colors"
+                >
+                  <option value="desc">Decrescente</option>
+                  <option value="asc">Crescente</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Lista de Cold Calls */}
+          {isLoadingColdCalls ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+              <p className="text-muted-foreground mt-2">Carregando análises...</p>
+            </div>
+          ) : filteredColdCalls.length === 0 ? (
+            <div className="p-8 text-center text-muted-foreground">
+              <p>Nenhuma análise encontrada.</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-border">
+                <thead className="bg-muted">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      Prospect
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      BDR
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      Score Médio
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      Data
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      Ações
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-card divide-y divide-border">
+                  {filteredColdCalls.map((coldCall) => (
+                    <tr key={coldCall.id} className="hover:bg-muted/50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div>
+                          <div className="text-sm font-medium text-foreground">
+                            {coldCall.prospectNome}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            {coldCall.prospectEmpresa}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
+                        {coldCall.bdr.nome}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getScoreColor(parseFloat(getAverageScore(coldCall)))}`}>
+                          {getAverageScore(coldCall)}/10
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
+                        {new Date(coldCall.createdAt).toLocaleDateString('pt-BR')}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button
+                          onClick={() => handleDelete(coldCall.id)}
+                          className="text-red-600 hover:text-red-900 mr-4"
+                        >
+                          Deletar
+                        </button>
+                        <Link
+                          href={`/cold-calls/${coldCall.id}`}
+                          className="text-primary hover:text-primary/80"
+                        >
+                          Ver Detalhes
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        {/* Resultado da Análise */}
         {analysisResult && (
-          <div className="bg-card rounded-lg shadow-sm border border-border p-6">
+          <div className="bg-card rounded-lg shadow-sm border border-border p-6 mt-8">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold text-foreground">Resultado da Análise</h2>
               <span className="text-sm text-muted-foreground">
@@ -326,38 +555,38 @@ export default function ColdCallsPage() {
             </div>
             
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-              <div className="text-center p-4 bg-blue-50 rounded-lg">
-                <div className="text-2xl font-bold text-blue-600">
+              <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <div className="text-2xl font-bold text-blue-600 dark:text-blue-300">
                   {analysisResult.warmerScore}/10
                 </div>
                 <div className="text-sm text-foreground">Warmer</div>
               </div>
-              <div className="text-center p-4 bg-green-50 rounded-lg">
-                <div className="text-2xl font-bold text-green-600">
+              <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                <div className="text-2xl font-bold text-green-600 dark:text-green-300">
                   {analysisResult.reframeScore}/10
                 </div>
                 <div className="text-sm text-foreground">Reframe</div>
               </div>
-              <div className="text-center p-4 bg-yellow-50 rounded-lg">
-                <div className="text-2xl font-bold text-yellow-600">
+              <div className="text-center p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-300">
                   {analysisResult.rationalDrowningScore}/10
                 </div>
                 <div className="text-sm text-foreground">Rational Drowning</div>
               </div>
-              <div className="text-center p-4 bg-purple-50 rounded-lg">
-                <div className="text-2xl font-bold text-purple-600">
+              <div className="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                <div className="text-2xl font-bold text-purple-600 dark:text-purple-300">
                   {analysisResult.emotionalImpactScore}/10
                 </div>
                 <div className="text-sm text-foreground">Emotional Impact</div>
               </div>
-              <div className="text-center p-4 bg-red-50 rounded-lg">
-                <div className="text-2xl font-bold text-red-600">
+              <div className="text-center p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                <div className="text-2xl font-bold text-red-600 dark:text-red-300">
                   {analysisResult.newWayScore}/10
                 </div>
                 <div className="text-sm text-foreground">New Way</div>
               </div>
-              <div className="text-center p-4 bg-indigo-50 rounded-lg">
-                <div className="text-2xl font-bold text-indigo-600">
+              <div className="text-center p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg">
+                <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-300">
                   {analysisResult.yourSolutionScore}/10
                 </div>
                 <div className="text-sm text-foreground">Your Solution</div>
